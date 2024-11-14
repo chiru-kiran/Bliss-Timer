@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import dagger.hilt.android.AndroidEntryPoint
+import uk.ac.tees.mad.univid.presentation.component.ApplicationNavigation
 import uk.ac.tees.mad.univid.ui.theme.BlissTimerTheme
 
 @AndroidEntryPoint
@@ -21,7 +22,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             BlissTimerTheme {
-
+                ApplicationNavigation()
             }
         }
     }
