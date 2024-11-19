@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "75512068097",
+    "project_id": "blisstimer-2f801",
+    "storage_bucket": "blisstimer-2f801.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:75512068097:android:2dded56cd1cac8fb056800",
+        "android_client_info": {
+          "package_name": "uk.ac.tees.mad.univid"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMLM_rmjklffefZK0A6lvdmJYPI_xbNrI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

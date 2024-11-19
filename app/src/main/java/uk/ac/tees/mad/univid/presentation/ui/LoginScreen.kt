@@ -83,7 +83,7 @@ fun LoginScreen(viewModel: AppViewModel, navController: NavHostController) {
         Button(
             onClick = { /*TODO*/ }, modifier = Modifier
                 .fillMaxWidth()
-                .height(45.dp), shape = RoundedCornerShape(20.dp),
+                .height(50.dp), shape = RoundedCornerShape(20.dp),
             colors = ButtonDefaults.buttonColors(Color(0xFF247CFF))
         ) {
             Text(text = "Login", fontFamily = poppins, fontSize = 20.sp)
