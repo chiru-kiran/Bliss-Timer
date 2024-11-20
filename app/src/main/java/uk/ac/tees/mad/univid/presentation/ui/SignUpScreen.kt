@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -20,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -31,6 +33,8 @@ import uk.ac.tees.mad.univid.ui.theme.poppins
 
 @Composable
 fun SignUpScreen(viewModel: AppViewModel, navController: NavHostController) {
+    val isLoggedIn = viewModel.isLoggedIn
+    val isLoading = viewModel.isLoading
     val email = remember { mutableStateOf("") }
     val password = remember {
         mutableStateOf("")
@@ -38,6 +42,11 @@ fun SignUpScreen(viewModel: AppViewModel, navController: NavHostController) {
     val number = remember {
         mutableStateOf("")
     }
+    val context = LocalContext.current
+    if (isLoggedIn.value){
+        navController.navigate(ApplicationNavigationItems.LoginScreen.route)
+    }
+
     Column(Modifier.padding(24.dp)) {
         Spacer(modifier = Modifier.height(120.dp))
         Text(
@@ -100,16 +109,21 @@ fun SignUpScreen(viewModel: AppViewModel, navController: NavHostController) {
         )
         Spacer(modifier = Modifier.height(50.dp))
         Button(
-            onClick = { /*TODO*/ }, modifier = Modifier
+            onClick = { viewModel.signUp(context = context, email = email.value, password = password.value, number = number.value) },
+            modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp), shape = RoundedCornerShape(20.dp),
             colors = ButtonDefaults.buttonColors(Color(0xFF247CFF))
         ) {
-            Text(text = "Create Account", fontFamily = poppins, fontSize = 20.sp)
+            if (isLoading.value) {
+                CircularProgressIndicator()
+            } else {
+                Text(text = "Create Account", fontFamily = poppins, fontSize = 20.sp)
+            }
         }
         Spacer(modifier = Modifier.height(30.dp))
         Text(
-            text = "By loggin you agree to our Terms & Conditions and PrivacyPolicy",
+            text = "By logging you agree to our Terms & Conditions and PrivacyPolicy",
             fontFamily = poppins,
             fontSize = 12.sp,
             fontWeight = FontWeight.Light

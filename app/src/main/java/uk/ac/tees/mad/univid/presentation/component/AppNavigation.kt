@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import uk.ac.tees.mad.univid.presentation.AppViewModel
+import uk.ac.tees.mad.univid.presentation.ui.HomeScreen
 import uk.ac.tees.mad.univid.presentation.ui.LoginScreen
 import uk.ac.tees.mad.univid.presentation.ui.SignUpScreen
 import uk.ac.tees.mad.univid.presentation.ui.SplashScreen
@@ -14,6 +15,7 @@ sealed class ApplicationNavigationItems(val route : String){
     object SplashScreen : ApplicationNavigationItems("splash_screen")
     object LoginScreen : ApplicationNavigationItems("login_screen")
     object SignUpScreen : ApplicationNavigationItems("sign_up_screen")
+    object HomeScreen : ApplicationNavigationItems("home_screen")
 }
 
 @Composable
@@ -31,6 +33,9 @@ fun ApplicationNavigation(){
         }
         composable(ApplicationNavigationItems.SignUpScreen.route){
             SignUpScreen(viewModel, navController)
+        }
+        composable(ApplicationNavigationItems.HomeScreen.route){
+            HomeScreen(viewModel, navController)
         }
     }
 }

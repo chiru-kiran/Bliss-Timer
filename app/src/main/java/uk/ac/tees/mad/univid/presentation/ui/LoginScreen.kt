@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -21,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,9 +33,15 @@ import uk.ac.tees.mad.univid.ui.theme.poppins
 
 @Composable
 fun LoginScreen(viewModel: AppViewModel, navController: NavHostController) {
+    val isLoggedIn = viewModel.isLoggedIn
+    val isLoading = viewModel.isLoading
     val email = remember { mutableStateOf("") }
     val password = remember {
         mutableStateOf("")
+    }
+    val context = LocalContext.current
+    if (isLoggedIn.value){
+        navController.navigate(ApplicationNavigationItems.HomeScreen.route)
     }
     Column(Modifier.padding(24.dp)) {
         Spacer(modifier = Modifier.height(120.dp))
@@ -81,12 +89,16 @@ fun LoginScreen(viewModel: AppViewModel, navController: NavHostController) {
         )
         Spacer(modifier = Modifier.height(50.dp))
         Button(
-            onClick = { /*TODO*/ }, modifier = Modifier
+            onClick = { viewModel.login(context, email.value, password.value) }, modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp), shape = RoundedCornerShape(20.dp),
             colors = ButtonDefaults.buttonColors(Color(0xFF247CFF))
         ) {
-            Text(text = "Login", fontFamily = poppins, fontSize = 20.sp)
+            if (isLoading.value) {
+                CircularProgressIndicator()
+            } else {
+                Text(text = "Login", fontFamily = poppins, fontSize = 20.sp)
+            }
         }
         Spacer(modifier = Modifier.height(30.dp))
         Text(
