@@ -3,11 +3,17 @@ package uk.ac.tees.mad.univid.presentation
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -69,4 +75,5 @@ class AppViewModel @Inject constructor(
         authentication.signOut()
         isLoggedIn.value = false
     }
+
 }
