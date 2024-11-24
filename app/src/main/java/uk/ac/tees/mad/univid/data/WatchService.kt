@@ -1,5 +1,6 @@
 package uk.ac.tees.mad.univid.data
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -44,6 +45,7 @@ class WatchService : Service() {
         return START_STICKY
     }
 
+    @SuppressLint("ForegroundServiceType")
     private fun startStopwatch() {
         if (isRunning) return
 

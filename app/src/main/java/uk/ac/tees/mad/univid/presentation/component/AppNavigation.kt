@@ -10,12 +10,14 @@ import uk.ac.tees.mad.univid.presentation.ui.HomeScreen
 import uk.ac.tees.mad.univid.presentation.ui.LoginScreen
 import uk.ac.tees.mad.univid.presentation.ui.SignUpScreen
 import uk.ac.tees.mad.univid.presentation.ui.SplashScreen
+import uk.ac.tees.mad.univid.presentation.ui.TimerSettingsScreen
 
 sealed class ApplicationNavigationItems(val route : String){
     object SplashScreen : ApplicationNavigationItems("splash_screen")
     object LoginScreen : ApplicationNavigationItems("login_screen")
     object SignUpScreen : ApplicationNavigationItems("sign_up_screen")
     object HomeScreen : ApplicationNavigationItems("home_screen")
+    object TimerSettingsScreen : ApplicationNavigationItems("timer_settings_screen")
 }
 
 @Composable
@@ -36,6 +38,9 @@ fun ApplicationNavigation(){
         }
         composable(ApplicationNavigationItems.HomeScreen.route){
             HomeScreen(viewModel, navController)
+        }
+        composable(ApplicationNavigationItems.TimerSettingsScreen.route){
+            TimerSettingsScreen(viewModel, navController)
         }
     }
 }
