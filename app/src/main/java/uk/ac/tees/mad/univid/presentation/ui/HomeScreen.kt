@@ -3,17 +3,33 @@ package uk.ac.tees.mad.univid.presentation.ui
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.SharedPreferences
 import android.view.WindowManager
+import android.widget.Space
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.DateRange
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -24,16 +40,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
+import uk.ac.tees.mad.univid.R
 import uk.ac.tees.mad.univid.presentation.AppViewModel
+import uk.ac.tees.mad.univid.presentation.component.ApplicationNavigationItems
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun HomeScreen(viewModel: AppViewModel, navController: NavHostController) {
     var isRunning by remember { mutableStateOf(false) }
     var timeElapsed by remember { mutableStateOf(0L) }
     val context = LocalContext.current
+    val isMoreVisible = remember { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
         val activity = context.findActivity()
@@ -52,29 +76,106 @@ fun HomeScreen(viewModel: AppViewModel, navController: NavHostController) {
             }
         }
     }
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Text(
-            text = formatTime(timeElapsed),
-            style = MaterialTheme.typography.headlineMedium
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Row {
-            Button(onClick = {
-                isRunning = !isRunning
-            }) {
-                Text(if (isRunning) "Stop" else "Start")
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .navigationBarsPadding()) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Text(
+                text = formatTime(timeElapsed),
+                style = MaterialTheme.typography.headlineMedium,
+                fontSize = 60.sp)
+            Spacer(modifier = Modifier.height(16.dp))
+            Row {
+                TextButton(onClick = {
+                    isRunning = !isRunning
+                }) {
+                    Icon(painter = if (isRunning) {
+                        painterResource(id = R.drawable.pause)} else {
+                            painterResource(id = R.drawable.play_buttton)}, contentDescription = null,modifier = Modifier.size(30.dp))
+                }
             }
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = {
-                timeElapsed = 0L
-                isRunning = false
-            }) {
-                Text("Reset")
+        }
+        Column(
+            Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 50.dp, end = 20.dp)) {
+            Icon(imageVector = Icons.Rounded.KeyboardArrowDown, contentDescription = null,
+                modifier = Modifier
+                    .size(50.dp)
+                    .clickable {
+                        isMoreVisible.value = !isMoreVisible.value
+                    })
+            if (isMoreVisible.value){
+                Spacer(modifier = Modifier.height(10.dp))
+                Icon(imageVector = Icons.Rounded.Settings, contentDescription = null,
+                    Modifier
+                        .size(30.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .clickable {
+                            navController.navigate(ApplicationNavigationItems.TimerSettingsScreen.route)
+                        })
+                Spacer(modifier = Modifier.height(10.dp))
+                Icon(imageVector = Icons.Rounded.DateRange, contentDescription = "history",
+                    Modifier
+                        .size(30.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .clickable {
+
+                        }
+                )
+            }
+        }
+        if (timeElapsed.seconds>= 1.seconds){
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)) {
+                TextButton(onClick = { timeElapsed = 0L
+                    isRunning = false },modifier = Modifier.weight(1f)) {
+                    Text(text = "Discard")
+                }
+                TextButton(onClick = { /*TODO*/ },modifier = Modifier.weight(1f)) {
+                    Text(text = "Save")
+                }
+            }
+        }
+        if (timeElapsed.seconds< 1.seconds) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(bottom = 140.dp)
+            ) {
+                Text(text = "Your Custom Preset",modifier = Modifier.padding(start = 10.dp))
+                Card(modifier = Modifier.padding(start = 10.dp)) {
+                    Text(
+                        text = getDuration(context, "userDuration").toString(),
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(bottom = 60.dp)
+            ) {
+                Text(text = "Recommended Presets",modifier = Modifier.padding(start = 10.dp))
+                Row {
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Card {
+                        Text(text = "5 Minutes", modifier = Modifier.padding(10.dp))
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Card {
+                        Text(text = "10 Minutes", modifier = Modifier.padding(10.dp))
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Card {
+                        Text(text = "15 Minutes", modifier = Modifier.padding(10.dp))
+                    }
+                }
             }
         }
     }
@@ -96,4 +197,10 @@ fun Context.findActivity(): Activity? {
         context = context.baseContext
     }
     return null
+}
+
+fun getDuration(context: Context, key: String): Duration {
+    val sharedPreferences: SharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+    val milliseconds = sharedPreferences.getLong(key, 0L)
+    return milliseconds.milliseconds
 }
