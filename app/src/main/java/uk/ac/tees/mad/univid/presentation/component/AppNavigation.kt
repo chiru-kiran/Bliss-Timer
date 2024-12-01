@@ -8,9 +8,11 @@ import androidx.navigation.compose.rememberNavController
 import uk.ac.tees.mad.univid.presentation.AppViewModel
 import uk.ac.tees.mad.univid.presentation.ui.HomeScreen
 import uk.ac.tees.mad.univid.presentation.ui.LoginScreen
+import uk.ac.tees.mad.univid.presentation.ui.MeditationSessionScreen
 import uk.ac.tees.mad.univid.presentation.ui.SignUpScreen
 import uk.ac.tees.mad.univid.presentation.ui.SplashScreen
 import uk.ac.tees.mad.univid.presentation.ui.TimerSettingsScreen
+import kotlin.time.Duration
 
 sealed class ApplicationNavigationItems(val route : String){
     object SplashScreen : ApplicationNavigationItems("splash_screen")
@@ -18,6 +20,9 @@ sealed class ApplicationNavigationItems(val route : String){
     object SignUpScreen : ApplicationNavigationItems("sign_up_screen")
     object HomeScreen : ApplicationNavigationItems("home_screen")
     object TimerSettingsScreen : ApplicationNavigationItems("timer_settings_screen")
+    object MeditationSessionScreen : ApplicationNavigationItems("meditation_session_screen/{duration}"){
+        fun createRoute(duration: String) = "meditation_session_screen/$duration"
+    }
 }
 
 @Composable
@@ -41,6 +46,10 @@ fun ApplicationNavigation(){
         }
         composable(ApplicationNavigationItems.TimerSettingsScreen.route){
             TimerSettingsScreen(viewModel, navController)
+        }
+        composable(ApplicationNavigationItems.MeditationSessionScreen.route) { backStackEntry ->
+            val duration = backStackEntry.arguments?.getString("duration")
+            MeditationSessionScreen(duration, viewModel, navController)
         }
     }
 }

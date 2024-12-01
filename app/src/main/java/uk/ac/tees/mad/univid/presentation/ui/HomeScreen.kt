@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.SharedPreferences
+import android.util.Log
 import android.view.WindowManager
 import android.widget.Space
 import androidx.compose.foundation.clickable
@@ -143,15 +144,20 @@ fun HomeScreen(viewModel: AppViewModel, navController: NavHostController) {
             }
         }
         if (timeElapsed.seconds< 1.seconds) {
+            val time = getDuration(context, "userDuration")
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(bottom = 140.dp)
             ) {
                 Text(text = "Your Custom Preset",modifier = Modifier.padding(start = 10.dp))
-                Card(modifier = Modifier.padding(start = 10.dp)) {
+                Card(modifier = Modifier.padding(start = 10.dp).clickable {
+                    navController.navigate(ApplicationNavigationItems.MeditationSessionScreen.createRoute(
+                        time.toString()
+                    ))
+                }) {
                     Text(
-                        text = getDuration(context, "userDuration").toString(),
+                        text = time.milliseconds.toString(),
                         modifier = Modifier.padding(10.dp)
                     )
                 }
@@ -164,15 +170,15 @@ fun HomeScreen(viewModel: AppViewModel, navController: NavHostController) {
                 Text(text = "Recommended Presets",modifier = Modifier.padding(start = 10.dp))
                 Row {
                     Spacer(modifier = Modifier.width(10.dp))
-                    Card {
+                    Card(modifier = Modifier.clickable { navController.navigate(ApplicationNavigationItems.MeditationSessionScreen.createRoute("300000")) }) {
                         Text(text = "5 Minutes", modifier = Modifier.padding(10.dp))
                     }
                     Spacer(modifier = Modifier.width(10.dp))
-                    Card {
+                    Card(modifier = Modifier.clickable { navController.navigate(ApplicationNavigationItems.MeditationSessionScreen.createRoute("600000")) }) {
                         Text(text = "10 Minutes", modifier = Modifier.padding(10.dp))
                     }
                     Spacer(modifier = Modifier.width(10.dp))
-                    Card {
+                    Card(modifier = Modifier.clickable { navController.navigate(ApplicationNavigationItems.MeditationSessionScreen.createRoute("900000")) }) {
                         Text(text = "15 Minutes", modifier = Modifier.padding(10.dp))
                     }
                 }
@@ -199,8 +205,9 @@ fun Context.findActivity(): Activity? {
     return null
 }
 
-fun getDuration(context: Context, key: String): Duration {
+fun getDuration(context: Context, key: String): Long {
     val sharedPreferences: SharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
     val milliseconds = sharedPreferences.getLong(key, 0L)
-    return milliseconds.milliseconds
+    Log.d("Time", "getDuration: ${milliseconds.milliseconds}")
+    return milliseconds
 }
