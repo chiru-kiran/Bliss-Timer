@@ -1,5 +1,9 @@
 package uk.ac.tees.mad.univid.presentation.ui
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
 import android.os.CountDownTimer
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,9 +28,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.NotificationCompat
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
 import uk.ac.tees.mad.univid.R
@@ -43,6 +49,7 @@ fun MeditationSessionScreen(
     var timerRunning by remember { mutableStateOf(false) }
     var lastTickTime by remember { mutableStateOf(0L) }
     var timerFinished by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     LaunchedEffect(key1 = timerRunning) {
         if (timerRunning && !timerFinished) {
@@ -54,8 +61,10 @@ fun MeditationSessionScreen(
                 timeRemaining -= elapsedTime
                 delay(1000L)
             }
-            timerRunning = false
             timerFinished = true
+            timerRunning = false
+
+            showTimerFinishedNotification(context)
         }
     }
 
@@ -96,6 +105,9 @@ fun MeditationSessionScreen(
                     modifier = Modifier.size(30.dp)
                 )
             }
+            if (timerFinished){
+                Text(text = "Congratulations ${durationToTime(duration!!.toLong())} completed")
+            }
         }
 
         if (timerFinished) {
@@ -127,4 +139,24 @@ fun MeditationSessionScreen(
             }
         }
     }
+}
+
+fun durationToTime(duration: Long) : String{
+    val hours = duration / 3600000
+    val minutes = (duration % 3600000) / 60000
+    val seconds = (duration % 60000) / 1000
+    return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+}
+
+private fun showTimerFinishedNotification(context: Context) {
+    val notificationId = 1
+    val builder = NotificationCompat.Builder(context, "meditation_channel")
+        .setSmallIcon(R.drawable.designer)
+        .setContentTitle("Meditation Session Complete")
+        .setContentText("Your meditation session has ended.")
+        .setPriority(NotificationCompat.PRIORITY_HIGH)
+        .setAutoCancel(true)
+
+    val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    notificationManager.notify(notificationId, builder.build())
 }
