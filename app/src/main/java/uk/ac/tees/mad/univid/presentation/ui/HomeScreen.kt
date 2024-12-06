@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Space
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,7 @@ import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -40,6 +42,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -55,6 +59,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun HomeScreen(viewModel: AppViewModel, navController: NavHostController) {
+    val isLoading = viewModel.isLoading
     var isRunning by remember { mutableStateOf(false) }
     var timeElapsed by remember { mutableStateOf(0L) }
     val context = LocalContext.current
@@ -138,7 +143,9 @@ fun HomeScreen(viewModel: AppViewModel, navController: NavHostController) {
                     isRunning = false },modifier = Modifier.weight(1f)) {
                     Text(text = "Discard")
                 }
-                TextButton(onClick = { /*TODO*/ },modifier = Modifier.weight(1f)) {
+                TextButton(onClick = {
+                    viewModel.addMeditationSession(context, timeElapsed.milliseconds.toString())
+                },modifier = Modifier.weight(1f)) {
                     Text(text = "Save")
                 }
             }
@@ -182,6 +189,12 @@ fun HomeScreen(viewModel: AppViewModel, navController: NavHostController) {
                         Text(text = "15 Minutes", modifier = Modifier.padding(10.dp))
                     }
                 }
+            }
+        }
+        if (isLoading.value) {
+            isRunning = false
+            Box(modifier = Modifier.fillMaxSize().background(Color.Black).alpha(0.5f), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
             }
         }
     }

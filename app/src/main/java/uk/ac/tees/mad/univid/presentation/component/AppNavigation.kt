@@ -1,5 +1,6 @@
 package uk.ac.tees.mad.univid.presentation.component
 
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -9,10 +10,10 @@ import uk.ac.tees.mad.univid.presentation.AppViewModel
 import uk.ac.tees.mad.univid.presentation.ui.HomeScreen
 import uk.ac.tees.mad.univid.presentation.ui.LoginScreen
 import uk.ac.tees.mad.univid.presentation.ui.MeditationSessionScreen
+import uk.ac.tees.mad.univid.presentation.ui.ProfileScreen
 import uk.ac.tees.mad.univid.presentation.ui.SignUpScreen
 import uk.ac.tees.mad.univid.presentation.ui.SplashScreen
 import uk.ac.tees.mad.univid.presentation.ui.TimerSettingsScreen
-import kotlin.time.Duration
 
 sealed class ApplicationNavigationItems(val route : String){
     object SplashScreen : ApplicationNavigationItems("splash_screen")
@@ -23,6 +24,7 @@ sealed class ApplicationNavigationItems(val route : String){
     object MeditationSessionScreen : ApplicationNavigationItems("meditation_session_screen/{duration}"){
         fun createRoute(duration: String) = "meditation_session_screen/$duration"
     }
+    object ProfileScreen : ApplicationNavigationItems("profile_screen")
 }
 
 @Composable
@@ -30,7 +32,7 @@ fun ApplicationNavigation(){
     val navController = rememberNavController()
     val viewModel : AppViewModel = viewModel()
 
-
+    Surface {
     NavHost(navController = navController, startDestination = ApplicationNavigationItems.SplashScreen.route){
         composable(ApplicationNavigationItems.SplashScreen.route){
             SplashScreen(navController)
@@ -51,5 +53,9 @@ fun ApplicationNavigation(){
             val duration = backStackEntry.arguments?.getString("duration")
             MeditationSessionScreen(duration, viewModel, navController)
         }
+        composable(ApplicationNavigationItems.ProfileScreen.route){
+            ProfileScreen(viewModel, navController)
+        }
     }
+}
 }

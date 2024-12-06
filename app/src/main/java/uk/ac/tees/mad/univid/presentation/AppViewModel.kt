@@ -14,6 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import uk.ac.tees.mad.univid.domain.model.MeditationSession
 import javax.inject.Inject
 
 @HiltViewModel
@@ -71,6 +72,44 @@ class AppViewModel @Inject constructor(
 
     }
 
+    fun addMeditationSession(context: Context, duration: String) {
+        isLoading.value = true
+        val currentTime = System.currentTimeMillis()
+        val currentDateTime = java.util.Date(currentTime)
+        val formatter = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault())
+        val formattedDateTime = formatter.format(currentDateTime)
+        Log.d("Time", "addMeditationSession: $formattedDateTime")
+
+        val userId = authentication.currentUser?.uid
+        if (userId != null) {
+            val sessionRef = firestore.collection("meditation_sessions")
+                .document(userId)
+                .collection("sessions")
+                .document()
+
+            val meditationSession = MeditationSession(duration = duration, currentTime = formattedDateTime)
+            sessionRef.set(meditationSession)
+                .addOnSuccessListener {
+                    val documentId = sessionRef.id
+                    firestore.collection("meditation_sessions").document(userId)
+                        .collection("sessions").document(documentId).update(
+                            "id" , documentId
+                        ).addOnSuccessListener {
+                            isLoading.value = false
+                            Toast.makeText(context, "Meditation session added successfully", Toast.LENGTH_SHORT).show()
+                        }.addOnFailureListener {
+                            isLoading.value = false
+                            Toast.makeText(context, "Error: ${it.localizedMessage}", Toast.LENGTH_SHORT).show()
+                        }
+                }
+                .addOnFailureListener { exception ->
+                    isLoading.value = false
+                    Toast.makeText(context, "Error: ${exception.localizedMessage}", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            Toast.makeText(context, "User not authenticated", Toast.LENGTH_SHORT).show()
+        }
+    }
     fun logout(){
         authentication.signOut()
         isLoggedIn.value = false

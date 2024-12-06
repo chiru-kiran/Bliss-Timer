@@ -5,6 +5,8 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.os.CountDownTimer
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,11 +17,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,6 +37,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -39,12 +50,14 @@ import uk.ac.tees.mad.univid.R
 import uk.ac.tees.mad.univid.presentation.AppViewModel
 import kotlin.time.Duration.Companion.seconds
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MeditationSessionScreen(
     duration: String?,
     viewModel: AppViewModel,
     navController: NavHostController
 ) {
+    val isLoading = viewModel.isLoading
     var timeRemaining by remember { mutableStateOf(duration!!.toLong()) }
     var timerRunning by remember { mutableStateOf(false) }
     var lastTickTime by remember { mutableStateOf(0L) }
@@ -72,69 +85,91 @@ fun MeditationSessionScreen(
     val minutes = ((timeRemaining / 1000) % 3600) / 60
     val seconds = (timeRemaining / 1000) % 60
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = String.format("%02d:%02d:%02d", hours, minutes, seconds),
-                style = MaterialTheme.typography.displayMedium,
-                fontSize = 60.sp
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            TextButton(onClick = {
-                if (timerRunning) {
-                    timerRunning = false
-                } else {
-                    lastTickTime = System.currentTimeMillis()
-                    timerRunning = true
-                    timerFinished = false
-                }
-            }) {
-                Icon(
-                    painter = if (timerRunning) {
-                        painterResource(id = R.drawable.pause)
-                    } else {
-                        painterResource(id = R.drawable.play_buttton)
-                    },
-                    contentDescription = null,
-                    modifier = Modifier.size(30.dp)
-                )
+    Scaffold(topBar = {
+        TopAppBar(title = {
+            Row {
+                Icon(imageVector = Icons.Default.KeyboardArrowLeft, contentDescription = null,modifier = Modifier
+                    .size(30.dp)
+                    .clickable {
+                        navController.popBackStack()
+                    })
+                Spacer(modifier = Modifier.width(20.dp))
+                Text(text = "Meditation Session")
             }
-            if (timerFinished){
-                Text(text = "Congratulations ${durationToTime(duration!!.toLong())} completed")
-            }
-        }
-
-        if (timerFinished) {
-            Row(
+        })
+    }) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(it)) {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
+                    .fillMaxSize()
                     .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                TextButton(
-                    onClick = {
-                        timeRemaining = duration!!.toLong()
-                        timerRunning = false
-                        timerFinished = false
-                    },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(text = "Discard")
+                Text(
+                    text = String.format("%02d:%02d:%02d", hours, minutes, seconds),
+                    style = MaterialTheme.typography.displayMedium,
+                    fontSize = 60.sp
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                if (timerFinished) {
+                    Text(text = "Congratulations ${durationToTime(duration!!.toLong())} completed")
                 }
-                TextButton(
-                    onClick = {
-                        // TODO: Add logic to save the session data
-                    },
-                    modifier = Modifier.weight(1f)
+                Spacer(modifier = Modifier.height(10.dp))
+                TextButton(onClick = {
+                    if (timerRunning) {
+                        timerRunning = false
+                    } else {
+                        lastTickTime = System.currentTimeMillis()
+                        timerRunning = true
+                        timerFinished = false
+                    }
+                }) {
+                    Icon(
+                        painter = if (timerRunning) {
+                            painterResource(id = R.drawable.pause)
+                        } else {
+                            painterResource(id = R.drawable.play_buttton)
+                        },
+                        contentDescription = null,
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+            }
+
+            if (timerFinished) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter)
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Text(text = "Save")
+                    TextButton(
+                        onClick = {
+                            timeRemaining = duration!!.toLong()
+                            timerRunning = false
+                            timerFinished = false
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(text = "Discard")
+                    }
+                    TextButton(
+                        onClick = {
+                            viewModel.addMeditationSession(context, duration.toString())
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(text = "Save")
+                    }
+                }
+            }
+            if (isLoading.value) {
+                Box(modifier = Modifier.fillMaxSize().background(Color.Black).alpha(0.5f), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
                 }
             }
         }
