@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import uk.ac.tees.mad.univid.presentation.AppViewModel
 import uk.ac.tees.mad.univid.presentation.ui.HomeScreen
 import uk.ac.tees.mad.univid.presentation.ui.LoginScreen
+import uk.ac.tees.mad.univid.presentation.ui.MeditationHistoryScreen
 import uk.ac.tees.mad.univid.presentation.ui.MeditationSessionScreen
 import uk.ac.tees.mad.univid.presentation.ui.ProfileScreen
 import uk.ac.tees.mad.univid.presentation.ui.SignUpScreen
@@ -25,6 +26,7 @@ sealed class ApplicationNavigationItems(val route : String){
         fun createRoute(duration: String) = "meditation_session_screen/$duration"
     }
     object ProfileScreen : ApplicationNavigationItems("profile_screen")
+    object MeditationHistoryScreen : ApplicationNavigationItems("meditation_history_screen")
 }
 
 @Composable
@@ -55,6 +57,9 @@ fun ApplicationNavigation(){
         }
         composable(ApplicationNavigationItems.ProfileScreen.route){
             ProfileScreen(viewModel, navController)
+        }
+        composable(ApplicationNavigationItems.MeditationHistoryScreen.route){
+            MeditationHistoryScreen(viewModel, navController)
         }
     }
 }

@@ -130,7 +130,7 @@ fun HomeScreen(viewModel: AppViewModel, navController: NavHostController) {
                         .size(30.dp)
                         .align(Alignment.CenterHorizontally)
                         .clickable {
-
+                            navController.navigate(ApplicationNavigationItems.MeditationHistoryScreen.route)
                         }
                 )
             }
