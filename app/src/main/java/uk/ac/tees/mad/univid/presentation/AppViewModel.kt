@@ -25,8 +25,11 @@ class AppViewModel @Inject constructor(
     val isLoggedIn = mutableStateOf(false)
     val isLoading = mutableStateOf(false)
 
+    val meditationData = mutableStateOf<List<MeditationSession>>(emptyList())
+
     init {
         isLoggedIn.value = authentication.currentUser != null
+        fetchMeditationData()
     }
 
     fun signUp(context: Context,email : String, password : String, number: String){
@@ -97,6 +100,7 @@ class AppViewModel @Inject constructor(
                         ).addOnSuccessListener {
                             isLoading.value = false
                             Toast.makeText(context, "Meditation session added successfully", Toast.LENGTH_SHORT).show()
+                            fetchMeditationData()
                         }.addOnFailureListener {
                             isLoading.value = false
                             Toast.makeText(context, "Error: ${it.localizedMessage}", Toast.LENGTH_SHORT).show()
@@ -110,6 +114,15 @@ class AppViewModel @Inject constructor(
             Toast.makeText(context, "User not authenticated", Toast.LENGTH_SHORT).show()
         }
     }
+
+    fun fetchMeditationData(){
+        firestore.collection("meditation_sessions").document(authentication.currentUser!!.uid).collection("sessions").get().addOnSuccessListener {
+            val data = it.toObjects(MeditationSession::class.java)
+            meditationData.value = data
+            Log.d("TAG", "fetchMeditationData: $data")
+        }
+    }
+
     fun logout(){
         authentication.signOut()
         isLoggedIn.value = false

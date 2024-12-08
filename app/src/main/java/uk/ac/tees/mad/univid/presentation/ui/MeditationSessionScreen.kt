@@ -48,6 +48,7 @@ import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
 import uk.ac.tees.mad.univid.R
 import uk.ac.tees.mad.univid.presentation.AppViewModel
+import uk.ac.tees.mad.univid.ui.theme.poppins
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,7 +95,8 @@ fun MeditationSessionScreen(
                         navController.popBackStack()
                     })
                 Spacer(modifier = Modifier.width(20.dp))
-                Text(text = "Meditation Session")
+                Text(text = "Meditation Session", fontFamily = poppins,
+                    modifier = Modifier.align(Alignment.CenterVertically))
             }
         })
     }) {

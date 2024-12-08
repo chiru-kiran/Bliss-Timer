@@ -144,7 +144,7 @@ fun HomeScreen(viewModel: AppViewModel, navController: NavHostController) {
                     Text(text = "Discard")
                 }
                 TextButton(onClick = {
-                    viewModel.addMeditationSession(context, timeElapsed.milliseconds.toString())
+                    viewModel.addMeditationSession(context, timeElapsed.toString())
                 },modifier = Modifier.weight(1f)) {
                     Text(text = "Save")
                 }

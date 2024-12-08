@@ -63,12 +63,13 @@ fun TimerSettingsScreen(viewModel: AppViewModel, navController: NavHostControlle
                                 navController.popBackStack()
                             })
                     Spacer(modifier = Modifier.width(20.dp))
-                    Text(text = "Settings")
+                    Text(text = "Settings", fontFamily = poppins,
+                        modifier = Modifier.align(Alignment.CenterVertically))
                     Spacer(modifier = Modifier.weight(1f))
                     Icon(
                         imageVector = Icons.Default.Person,
                         contentDescription = "profile",
-                        modifier = Modifier.padding(end = 10.dp).clickable {
+                        modifier = Modifier.align(Alignment.CenterVertically).padding(end = 10.dp).clickable {
                             navController.navigate(ApplicationNavigationItems.ProfileScreen.route)
                         }
                     )
