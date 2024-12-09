@@ -52,10 +52,18 @@ fun MeditationHistoryScreen(viewModel: AppViewModel, navController: NavHostContr
         ) {
             LazyColumn {
                 items(meditationHistory.value){ item->
-                    Text(text = item.duration)
+                    val duration = changeMillisecondsToTime(item.duration.toLong())
+                    Text(text = duration)
                     Text(text = item.currentTime)
                 }
             }
         }
     }
+}
+
+fun changeMillisecondsToTime(millis: Long): String{
+    val seconds = (millis / 1000) % 60
+    val minutes = (millis / (1000 * 60)) % 60
+    val hours = (millis / (1000 * 60 * 60))
+    return String.format("%02d:%02d:%02d", hours, minutes, seconds)
 }
