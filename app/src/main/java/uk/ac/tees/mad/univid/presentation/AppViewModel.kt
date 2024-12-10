@@ -29,7 +29,7 @@ class AppViewModel @Inject constructor(
 
     init {
         isLoggedIn.value = authentication.currentUser != null
-        fetchMeditationData()
+        if(isLoggedIn.value) {fetchMeditationData()}
     }
 
     fun signUp(context: Context,email : String, password : String, number: String){
@@ -115,12 +115,26 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    fun fetchMeditationData(){
-        firestore.collection("meditation_sessions").document(authentication.currentUser!!.uid).collection("sessions").get().addOnSuccessListener {
-            val data = it.toObjects(MeditationSession::class.java)
-            meditationData.value = data
-            Log.d("TAG", "fetchMeditationData: $data")
+    fun fetchMeditationData() {
+        val userId = authentication.currentUser?.uid
+
+        if (userId.isNullOrEmpty()) {
+            Log.e("fetchMeditationData", "User is not authenticated.")
+            return
         }
+
+        firestore.collection("meditation_sessions")
+            .document(userId)
+            .collection("sessions")
+            .get()
+            .addOnSuccessListener { documents ->
+                val data = documents.toObjects(MeditationSession::class.java)
+                meditationData.value = data
+                Log.d("fetchMeditationData", "Fetched meditation sessions: $data")
+            }
+            .addOnFailureListener { exception ->
+                Log.e("fetchMeditationData", "Error fetching meditation sessions: ${exception.localizedMessage}")
+            }
     }
 
     fun logout(){
