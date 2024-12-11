@@ -23,6 +23,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import uk.ac.tees.mad.univid.presentation.AppViewModel
@@ -68,8 +69,9 @@ fun historyView(time: String, addingTime : String){
     Card(modifier = Modifier
         .fillMaxWidth()
         .padding(12.dp)) {
-        Column {
-            Text(text = "Your session time was : ${time}")
+        Column(modifier = Modifier.padding(8.dp)) {
+            Text(text = "Your session time was : ${time}", fontFamily = poppins,
+                fontWeight = FontWeight.SemiBold)
             Text(text = "Added on ${addingTime}")
         }
     }

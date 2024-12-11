@@ -167,6 +167,94 @@ fun TimerSettingsScreen(viewModel: AppViewModel, navController: NavHostControlle
                 }
                 Spacer(modifier = Modifier.height(15.dp))
             }
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.height(15.dp))
+                    Text(
+                        text = "Add/Edit Your Custom Session",
+                        fontFamily = poppins,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(modifier = Modifier.height(15.dp))
+                    Row {
+                        Column {
+                            Text(
+                                text = "Hour",
+                                fontFamily = poppins,
+                                modifier = Modifier.align(Alignment.CenterHorizontally)
+                            )
+                            TextField(
+                                value = hours,
+                                onValueChange = { hours = it },
+                                modifier = Modifier
+                                    .width(60.dp)
+                                    .align(Alignment.CenterHorizontally),
+                                keyboardOptions = KeyboardOptions.Default.copy(
+                                    keyboardType = KeyboardType.Number
+                                ),
+                                singleLine = true,
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = "Minute",
+                                fontFamily = poppins,
+                                modifier = Modifier.align(Alignment.CenterHorizontally)
+                            )
+                            TextField(
+                                value = minutes,
+                                onValueChange = { minutes = it },
+                                modifier = Modifier
+                                    .width(60.dp)
+                                    .align(Alignment.CenterHorizontally),
+                                keyboardOptions = KeyboardOptions.Default.copy(
+                                    keyboardType = KeyboardType.Number
+                                ),
+                                singleLine = true
+
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = "Second",
+                                fontFamily = poppins,
+                                modifier = Modifier.align(Alignment.CenterHorizontally)
+                            )
+                            TextField(
+                                value = seconds,
+                                onValueChange = { seconds = it },
+                                modifier = Modifier
+                                    .width(60.dp)
+                                    .align(Alignment.CenterHorizontally),
+                                keyboardOptions = KeyboardOptions.Default.copy(
+                                    keyboardType = KeyboardType.Number
+                                ),
+                                singleLine = true
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        onClick = {
+                            val duration = parseDuration(hours, minutes, seconds)
+                            saveDuration(context, "userDuration1", duration)
+                        },
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Text("Save Duration")
+                    }
+                }
+                Spacer(modifier = Modifier.height(15.dp))
+            }
         }
     }
 }
