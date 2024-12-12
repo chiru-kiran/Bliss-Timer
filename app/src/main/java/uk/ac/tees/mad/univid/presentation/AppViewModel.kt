@@ -15,6 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import uk.ac.tees.mad.univid.domain.model.MeditationSession
+import uk.ac.tees.mad.univid.domain.model.User
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,11 +26,15 @@ class AppViewModel @Inject constructor(
     val isLoggedIn = mutableStateOf(false)
     val isLoading = mutableStateOf(false)
 
+    val userData = mutableStateOf<User?>(null)
     val meditationData = mutableStateOf<List<MeditationSession>>(emptyList())
 
     init {
         isLoggedIn.value = authentication.currentUser != null
-        if(isLoggedIn.value) {fetchMeditationData()}
+        if(isLoggedIn.value) {
+            fetchMeditationData()
+            loadUserData()
+        }
     }
 
     fun signUp(context: Context,email : String, password : String, number: String){
@@ -72,7 +77,17 @@ class AppViewModel @Inject constructor(
     }
 
     fun loadUserData(){
-
+        if (authentication.currentUser != null) {
+            firestore.collection("user").document(authentication.currentUser!!.uid).get().addOnSuccessListener {
+                val result = it.toObject(User::class.java)
+                userData.value = result
+                Log.d("TAG", "loadUserData: $result")
+            }.addOnFailureListener {
+                Log.d("TAG", "loadUserData: ${it.localizedMessage}")
+            }
+        }else{
+            return
+        }
     }
 
     fun addMeditationSession(context: Context, duration: String) {

@@ -90,7 +90,7 @@ fun TimerSettingsScreen(viewModel: AppViewModel, navController: NavHostControlle
                 ) {
                     Spacer(modifier = Modifier.height(15.dp))
                     Text(
-                        text = "Add/Edit Your Custom Session",
+                        text = "Add/Edit Your First Custom Session",
                         fontFamily = poppins,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -178,7 +178,7 @@ fun TimerSettingsScreen(viewModel: AppViewModel, navController: NavHostControlle
                 ) {
                     Spacer(modifier = Modifier.height(15.dp))
                     Text(
-                        text = "Add/Edit Your Custom Session",
+                        text = "Add/Edit Your Second Custom Session",
                         fontFamily = poppins,
                         fontWeight = FontWeight.SemiBold
                     )

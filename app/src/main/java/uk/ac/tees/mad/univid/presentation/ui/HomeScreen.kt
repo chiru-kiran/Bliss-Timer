@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.SharedPreferences
+import android.graphics.Color.alpha
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Space
@@ -152,21 +153,38 @@ fun HomeScreen(viewModel: AppViewModel, navController: NavHostController) {
         }
         if (timeElapsed.seconds< 1.seconds) {
             val time = getDuration(context, "userDuration")
+            val time2 = getDuration(context, "userDuration1")
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(bottom = 140.dp)
             ) {
                 Text(text = "Your Custom Preset",modifier = Modifier.padding(start = 10.dp))
-                Card(modifier = Modifier.padding(start = 10.dp).clickable {
-                    navController.navigate(ApplicationNavigationItems.MeditationSessionScreen.createRoute(
-                        time.toString()
-                    ))
-                }) {
-                    Text(
-                        text = time.milliseconds.toString(),
-                        modifier = Modifier.padding(10.dp)
-                    )
+                Row {
+                    Card(modifier = Modifier.padding(start = 10.dp).clickable {
+                        navController.navigate(
+                            ApplicationNavigationItems.MeditationSessionScreen.createRoute(
+                                time.toString()
+                            )
+                        )
+                    }) {
+                        Text(
+                            text = time.milliseconds.toString(),
+                            modifier = Modifier.padding(10.dp)
+                        )
+                    }
+                    Card(modifier = Modifier.padding(start = 10.dp).clickable {
+                        navController.navigate(
+                            ApplicationNavigationItems.MeditationSessionScreen.createRoute(
+                                time2.toString()
+                            )
+                        )
+                    }) {
+                        Text(
+                            text = time2.milliseconds.toString(),
+                            modifier = Modifier.padding(10.dp)
+                        )
+                    }
                 }
             }
             Column(
@@ -193,7 +211,12 @@ fun HomeScreen(viewModel: AppViewModel, navController: NavHostController) {
         }
         if (isLoading.value) {
             isRunning = false
-            Box(modifier = Modifier.fillMaxSize().background(Color.Black).alpha(0.5f), contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.3f)),
+                contentAlignment = Alignment.Center
+            ) {
                 CircularProgressIndicator()
             }
         }
