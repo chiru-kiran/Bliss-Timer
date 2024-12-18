@@ -100,24 +100,30 @@ fun EditProfileScreen(viewModel: AppViewModel, navController: NavHostController)
     }) {
         if (user.value != null) {
             Column(
-                modifier = Modifier.padding(it).fillMaxSize(),
+                modifier = Modifier
+                    .padding(it)
+                    .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(40.dp))
                 if (user.value!!.profilePhoto.isNotEmpty()) {
                     AsyncImage(
                         model = user.value!!.profilePhoto, contentDescription = null,
-                        modifier = Modifier.size(150.dp).clickable {
-                            cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
-                        }
+                        modifier = Modifier
+                            .size(150.dp)
+                            .clickable {
+                                cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
+                            }
                     )
                 } else {
                     Image(
                         painter = painterResource(id = R.drawable.profile),
                         contentDescription = null,
-                        modifier = Modifier.size(150.dp).clickable {
-                            cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
-                        }
+                        modifier = Modifier
+                            .size(150.dp)
+                            .clickable {
+                                cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
+                            }
                     )
                 }
                 Spacer(modifier = Modifier.height(20.dp))
@@ -129,6 +135,10 @@ fun EditProfileScreen(viewModel: AppViewModel, navController: NavHostController)
                 Spacer(modifier = Modifier.height(20.dp))
                 OutlinedTextField(value = email, onValueChange ={ email = it},
                     label = { Text(text = "E-mail")})
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(text = "Note: Email cannot be changed")
+                Spacer(modifier = Modifier.height(20.dp))
+
                 Button(onClick = {
                 }) {
                     Text(text = "Edit Profile")
