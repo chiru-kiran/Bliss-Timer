@@ -2,6 +2,7 @@ package uk.ac.tees.mad.univid.presentation.ui
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
@@ -24,6 +26,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -44,7 +48,9 @@ fun ProfileScreen(viewModel: AppViewModel, navController: NavHostController) {
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowLeft,
                         contentDescription = null,
-                        modifier = Modifier.align(Alignment.CenterStart)
+                        modifier = Modifier.align(Alignment.CenterStart).clickable {
+                            navController.popBackStack()
+                        }
                     )
                     Text(text = "Profile", modifier = Modifier.align(Alignment.Center))
                 }
@@ -61,13 +67,14 @@ fun ProfileScreen(viewModel: AppViewModel, navController: NavHostController) {
                 if (user.value!!.profilePhoto.isNotEmpty()) {
                     AsyncImage(
                         model = user.value!!.profilePhoto, contentDescription = null,
-                        modifier = Modifier.size(150.dp)
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier.size(200.dp).clip(CircleShape)
                     )
                 } else {
                     Image(
                         painter = painterResource(id = R.drawable.profile),
                         contentDescription = null,
-                        modifier = Modifier.size(150.dp)
+                        modifier = Modifier.size(200.dp)
                     )
                 }
                 Spacer(modifier = Modifier.height(20.dp))
@@ -88,25 +95,27 @@ fun ProfileScreen(viewModel: AppViewModel, navController: NavHostController) {
                         .fillMaxWidth()
                         .padding(22.dp)
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.editing),
-                        contentDescription = null,
-                        modifier = Modifier.size(30.dp)
-                    )
-                    Spacer(modifier = Modifier.width(20.dp))
-                    Text(text = "Edit/Delete Saved Sessions")
-                    Spacer(modifier = Modifier.weight(1f))
-                    Icon(
-                        imageVector = Icons.Rounded.KeyboardArrowRight,
-                        contentDescription = null,
-                        modifier = Modifier.size(30.dp)
-                    )
+//                    Icon(
+//                        painter = painterResource(id = R.drawable.editing),
+//                        contentDescription = null,
+//                        modifier = Modifier.size(30.dp)
+//                    )
+//                    Spacer(modifier = Modifier.width(20.dp))
+//                    Text(text = "Edit/Delete Saved Sessions")
+//                    Spacer(modifier = Modifier.weight(1f))
+//                    Icon(
+//                        imageVector = Icons.Rounded.KeyboardArrowRight,
+//                        contentDescription = null,
+//                        modifier = Modifier.size(30.dp)
+//                    )
                 }
-                Spacer(modifier = Modifier.height(20.dp))
+//                Spacer(modifier = Modifier.height(20.dp))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(22.dp)
+                        .padding(horizontal = 22.dp).clickable {
+                            viewModel.logout()
+                        }
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.logout),

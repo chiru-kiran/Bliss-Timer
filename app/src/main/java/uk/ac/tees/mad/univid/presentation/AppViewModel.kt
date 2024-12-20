@@ -1,6 +1,7 @@
 package uk.ac.tees.mad.univid.presentation
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
@@ -11,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -21,7 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AppViewModel @Inject constructor(
     private val authentication : FirebaseAuth,
-    private val firestore : FirebaseFirestore
+    private val firestore : FirebaseFirestore,
+    private val database : FirebaseStorage
 ) : ViewModel() {
     val isLoggedIn = mutableStateOf(false)
     val isLoading = mutableStateOf(false)
@@ -155,6 +158,45 @@ class AppViewModel @Inject constructor(
     fun logout(){
         authentication.signOut()
         isLoggedIn.value = false
+        userData.value = null
+    }
+
+    fun uploadProfilePhoto(context: Context, photoUri: Uri) {
+        val userId = authentication.currentUser?.uid
+        val storageRef = database.reference.child("profile_photos").child(userId!!)
+        val uploadTask = storageRef.putFile(photoUri)
+        uploadTask.addOnSuccessListener {
+            storageRef.downloadUrl.addOnSuccessListener { uri ->
+                firestore.collection("user").document(userId).update("profilePhoto", uri.toString())
+                    .addOnSuccessListener {
+                        loadUserData()
+                        Toast.makeText(
+                            context,
+                            "Profile photo updated successfully",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }.addOnFailureListener {
+                    Toast.makeText(context, "Error updating profile photo", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }.addOnFailureListener {
+                Toast.makeText(context, "Error getting download URL", Toast.LENGTH_SHORT).show()
+            }
+        }.addOnFailureListener {
+            Toast.makeText(context, "Error uploading profile photo", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun updateUserData(context: Context, newName: String, newNumber: String) {
+        firestore.collection("user").document(authentication.currentUser!!.uid).update(
+            "name", newName,
+            "number", newNumber
+        ).addOnSuccessListener {
+            loadUserData()
+            Toast.makeText(context, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+        }.addOnFailureListener {
+            Toast.makeText(context, "Error updating profile", Toast.LENGTH_SHORT).show()
+        }
     }
 
 }
