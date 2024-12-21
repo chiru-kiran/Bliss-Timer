@@ -113,8 +113,13 @@ fun ProfileScreen(viewModel: AppViewModel, navController: NavHostController) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 22.dp).clickable {
+                        .padding(horizontal = 34.dp).clickable {
                             viewModel.logout()
+                            navController.navigate(
+                                ApplicationNavigationItems.LoginScreen.route
+                            ){
+                                popUpTo(0)
+                            }
                         }
                 ) {
                     Icon(
