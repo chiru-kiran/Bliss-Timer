@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "uk.ac.tees.mad.univid"
+    namespace = "uk.ac.tees.mad.blisstimer"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "uk.ac.tees.mad.univid"
+        applicationId = "uk.ac.tees.mad.blisstimer"
         minSdk = 28
         targetSdk = 34
         versionCode = 1
@@ -43,7 +43,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
     packaging {
         resources {
